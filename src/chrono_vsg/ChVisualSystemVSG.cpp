@@ -32,6 +32,48 @@ namespace vsg3d {
 using namespace std;
 
 // -----------------------------------------------------------------------------
+// helpers from implot_demo
+// utility structure for realtime plot
+struct ScrollingBuffer {
+    int MaxSize;
+    int Offset;
+    ImVector<ImVec2> Data;
+    ScrollingBuffer(int max_size = 2000) {
+        MaxSize = max_size;
+        Offset  = 0;
+        Data.reserve(MaxSize);
+    }
+    void AddPoint(float x, float y) {
+        if (Data.size() < MaxSize)
+            Data.push_back(ImVec2(x,y));
+        else {
+            Data[Offset] = ImVec2(x,y);
+            Offset =  (Offset + 1) % MaxSize;
+        }
+    }
+    void Erase() {
+        if (Data.size() > 0) {
+            Data.shrink(0);
+            Offset  = 0;
+        }
+    }
+};
+
+// utility structure for realtime plot
+struct RollingBuffer {
+    float Span;
+    ImVector<ImVec2> Data;
+    RollingBuffer() {
+        Span = 10.0f;
+        Data.reserve(2000);
+    }
+    void AddPoint(float x, float y) {
+        float xmod = fmodf(x, Span);
+        if (!Data.empty() && xmod < Data.back().x)
+            Data.shrink(0);
+        Data.push_back(ImVec2(xmod, y));
+    }
+};
 
 class ChMainGuiVSG : public vsg::Inherit<vsg::Command, ChMainGuiVSG> {
   public:
@@ -174,7 +216,21 @@ class ChBaseGuiComponentVSG : public ChGuiComponentVSG {
         }
 
         ImGui::Spacing();
+        rdata1.AddPoint(m_app->GetSimulationTime(),m_app->GetSimulationRTF());
+        static float history = 10.0f;
+        ImGui::SliderFloat("History",&history,1,30,"%.1f s");
+        rdata1.Span = history;
+        static ImPlotAxisFlags xflags = ImPlotAxisFlags_NoTickLabels;
+        static ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit|ImPlotAxisFlags_RangeFit;
+        if (ImPlot::BeginPlot("##Rolling", ImVec2(-1,150))) {
+            ImPlot::SetupAxes("Time", nullptr, xflags, yflags);
+            ImPlot::SetupAxisLimits(ImAxis_X1,0,history, ImGuiCond_Always);
+            ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
+            ImPlot::PlotLine("Realtime Factor", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 0, 2 * sizeof(float));
+            ImPlot::EndPlot();
+        }
 
+        ImGui::Spacing();
         if (ImGui::Button("Quit"))
             m_app->Quit();
 
@@ -182,6 +238,7 @@ class ChBaseGuiComponentVSG : public ChGuiComponentVSG {
     }
 
     ChVisualSystemVSG* m_app;
+    RollingBuffer rdata1;
 };
 
 class ChCameraGuiComponentVSG : public ChGuiComponentVSG {
