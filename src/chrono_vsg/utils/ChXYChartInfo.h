@@ -10,10 +10,12 @@
 #include <cmath>
 #include <vector>
 
+#include "chrono_vsg/ChApiVSG.h"
+
 namespace chrono {
 namespace vsg3d {
 
-class ChXYChartInfo {
+class CH_VSG_API ChXYChartInfo {
   public:
     ChXYChartInfo();
     ~ChXYChartInfo();
