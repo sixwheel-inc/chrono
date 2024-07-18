@@ -122,7 +122,9 @@ add_library(ChronoEngine_vsg
             ${CE_VSG_SHAPES_FILES}
             ${CE_VSG_RESOURCES_FILES}
             ${CE_VSG_UTILS_FILES}
-            ${CE_VSG_STB_FILES})
+            ${CE_VSG_STB_FILES}
+        utils/ChXYChartInfo.cpp
+        utils/ChXYChartInfo.h)
 
 target_compile_definitions(ChronoEngine_vsg PRIVATE "CH_API_COMPILE_VSG")
 

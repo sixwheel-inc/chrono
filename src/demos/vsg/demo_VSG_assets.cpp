@@ -34,6 +34,7 @@
 #include "chrono/assets/ChVisualShapeModelFile.h"
 
 #include "chrono_vsg/ChVisualSystemVSG.h"
+#include "chrono_vsg/utils/ChXYChartInfo.h"
 
 #include "chrono_thirdparty/filesystem/path.h"
 
@@ -376,6 +377,19 @@ int main(int argc, char* argv[]) {
         std::cout << "Error creating directory " << out_dir << std::endl;
         return 1;
     }
+
+    // Setup example xy-data to be plotted as gui element
+    ChXYChartInfo myChartInfo;
+    myChartInfo.title = "Demo Signal";
+    myChartInfo.xlabel = "Time (secs)";
+    myChartInfo.ylabel = "Voltage (kV)";
+    for (int i = 0; i < 1000; i++) {
+        float x = i * 0.001f;
+        float y = sinf(50.0f * x);
+        myChartInfo.xdata.push_back(x);
+        myChartInfo.ydata.push_back(y);
+    }
+    vis->AddXYChart(&myChartInfo);
 
     ChRealtimeStepTimer rt;
     double step_size = 0.01;

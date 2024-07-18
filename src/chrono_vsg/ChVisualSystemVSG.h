@@ -51,6 +51,7 @@
 #include "chrono_vsg/ChGuiComponentVSG.h"
 #include "chrono_vsg/ChEventHandlerVSG.h"
 #include "chrono_vsg/shapes/ShapeBuilder.h"
+#include "chrono_vsg/utils/ChXYChartInfo.h"
 
 namespace chrono {
 namespace vsg3d {
@@ -116,6 +117,8 @@ class CH_VSG_API ChVisualSystemVSG : virtual public ChVisualSystem {
     /// The file extension determines the image format.
     virtual void WriteImageToFile(const std::string& filename) override;
 
+    void AddXYChart(ChXYChartInfo* chart);
+    ChXYChartInfo* GetXYChart() { return m_xy_chart; }
     void SetWindowSize(const ChVector2i& size);
     void SetWindowSize(int width, int height);
     void SetWindowPosition(const ChVector2i& pos);
@@ -237,6 +240,7 @@ class CH_VSG_API ChVisualSystemVSG : virtual public ChVisualSystem {
     vsg::ref_ptr<vsg::Viewer> m_viewer;  ///< high-level VSG rendering manager
     vsg::ref_ptr<vsg::RenderGraph> m_renderGraph;
 
+    ChXYChartInfo* m_xy_chart;
     bool m_show_logo;
     float m_logo_height;
     ChVector2f m_logo_pos;

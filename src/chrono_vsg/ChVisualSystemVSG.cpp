@@ -40,21 +40,21 @@ struct ScrollingBuffer {
     ImVector<ImVec2> Data;
     ScrollingBuffer(int max_size = 2000) {
         MaxSize = max_size;
-        Offset  = 0;
+        Offset = 0;
         Data.reserve(MaxSize);
     }
     void AddPoint(float x, float y) {
         if (Data.size() < MaxSize)
-            Data.push_back(ImVec2(x,y));
+            Data.push_back(ImVec2(x, y));
         else {
-            Data[Offset] = ImVec2(x,y);
-            Offset =  (Offset + 1) % MaxSize;
+            Data[Offset] = ImVec2(x, y);
+            Offset = (Offset + 1) % MaxSize;
         }
     }
     void Erase() {
         if (Data.size() > 0) {
             Data.shrink(0);
-            Offset  = 0;
+            Offset = 0;
         }
     }
 };
@@ -132,9 +132,27 @@ class ChMainGuiVSG : public vsg::Inherit<vsg::Command, ChMainGuiVSG> {
 
         // Render GUI
         if (m_app->m_show_gui) {
+            // show additional gui components
             for (auto& gui : m_app->m_gui) {
                 if (gui->IsVisible())
                     gui->render();
+            }
+            // show a window with xy-data
+            auto xy_ptr = m_app->GetXYChart();
+            if (xy_ptr) {
+                if (xy_ptr->DataComplete()) {
+                    ImGui::SetNextWindowSize(ImVec2(500.0f, 0.0f));
+                    ImGui::SetNextWindowPos(ImVec2(20, 500));
+                    ImGui::Begin("Results");
+                    // to do
+                    if (ImPlot::BeginPlot("##Line Plots")) {
+                        ImPlot::SetupAxes(xy_ptr->xlabel.c_str(), xy_ptr->ylabel.c_str());
+                        ImPlot::PlotLine(xy_ptr->title.c_str(), xy_ptr->xdata.data(), xy_ptr->ydata.data(),
+                                         xy_ptr->xdata.size());
+                        ImPlot::EndPlot();
+                    }
+                    ImGui::End();
+                }
             }
         }
     }
@@ -216,17 +234,18 @@ class ChBaseGuiComponentVSG : public ChGuiComponentVSG {
         }
 
         ImGui::Spacing();
-        rdata1.AddPoint(m_app->GetSimulationTime(),m_app->GetSimulationRTF());
+        rdata1.AddPoint(m_app->GetSimulationTime(), m_app->GetSimulationRTF());
         static float history = 10.0f;
-        ImGui::SliderFloat("History",&history,1,30,"%.1f s");
+        ImGui::SliderFloat("History", &history, 1, 30, "%.1f s");
         rdata1.Span = history;
         static ImPlotAxisFlags xflags = ImPlotAxisFlags_NoTickLabels;
-        static ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit|ImPlotAxisFlags_RangeFit;
-        if (ImPlot::BeginPlot("##Rolling", ImVec2(-1,150))) {
+        static ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
+        if (ImPlot::BeginPlot("##Rolling", ImVec2(-1, 150))) {
             ImPlot::SetupAxes("Time", nullptr, xflags, yflags);
-            ImPlot::SetupAxisLimits(ImAxis_X1,0,history, ImGuiCond_Always);
-            ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
-            ImPlot::PlotLine("Realtime Factor", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 0, 2 * sizeof(float));
+            ImPlot::SetupAxisLimits(ImAxis_X1, 0, history, ImGuiCond_Always);
+            ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+            ImPlot::PlotLine("Realtime Factor", &rdata1.Data[0].x, &rdata1.Data[0].y, rdata1.Data.size(), 0, 0,
+                             2 * sizeof(float));
             ImPlot::EndPlot();
         }
 
@@ -503,6 +522,7 @@ ChVisualSystemVSG::ChVisualSystemVSG(int num_divs)
     : m_show_logo(true),
       m_logo_pos({10, 10}),
       m_logo_height(64),
+      m_xy_chart(nullptr),
       m_yup(false),
       m_useSkybox(false),
       m_capture_image(false),
@@ -564,6 +584,10 @@ ChVisualSystemVSG::ChVisualSystemVSG(int num_divs)
 }
 
 ChVisualSystemVSG::~ChVisualSystemVSG() {}
+
+void ChVisualSystemVSG::AddXYChart(ChXYChartInfo* chart) {
+    m_xy_chart = chart;
+}
 
 void ChVisualSystemVSG::SetOutputScreen(int screenNum) {
     if (m_initialized) {
@@ -1072,7 +1096,7 @@ void ChVisualSystemVSG::Render() {
                 if (cloud.pcloud->IsVisible(k))
                     p = vsg::vec3CH(cloud.pcloud->Particle(k).GetPos());
                 else
-                    p = hide_pos;//vsg::vec3(0, 0, 0);
+                    p = hide_pos;  // vsg::vec3(0, 0, 0);
                 k++;
             }
             cloud.positions->dirty();
