@@ -76,6 +76,14 @@ class ChApi ChVisualMaterial {
     void SetClassID(unsigned short int id) { class_id = id; }
     void SetInstanceID(unsigned short int id) { instance_id = id; }
 
+    /// @brief   Reflectivity in a lidar's wavelength (0-1)
+    /// @param intensity 
+    void SetLidarIntensity(float intensity);
+
+    /// @brief   Reflectivity in a radar's wavelength (0-1)
+    /// @param backscatter
+    void SetRadarBackscatter(float backscatter);
+    
     /// @brief  Set the Hapke material parameters. Note that in our implementation, we ignore the impact of coherent backscatter. 
     /// @param w  single scattering albedo
     /// @param b  shape controlling parameter for the amplitude of backward and forward scatter of particles
@@ -128,6 +136,9 @@ class ChApi ChVisualMaterial {
 
     unsigned short int GetClassID() const { return class_id; }
     unsigned short int GetInstanceID() const { return instance_id; }
+
+    float GetLidarIntensity() const {return lidar_intensity;}
+    float GetRadarBackscatter() const {return radar_backscatter;}
 
     /// Method to allow serialization of transient data to archives.
     virtual void ArchiveOut(ChArchiveOut& archive_out);
@@ -184,6 +195,12 @@ class ChApi ChVisualMaterial {
     float hapke_h_s;
     float hapke_phi;
     float hapke_theta_p;
+
+    // Lidar paramters
+    float lidar_intensity;
+    
+    // Radar parameters
+    float radar_backscatter;
     
 };
 

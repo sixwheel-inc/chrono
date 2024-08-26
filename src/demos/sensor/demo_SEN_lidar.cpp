@@ -122,22 +122,35 @@ int main(int argc, char* argv[]) {
     mesh_body->SetFixed(true);
     // sys.Add(mesh_body);
 
+
+    auto vis_mat = chrono_types::make_shared<ChVisualMaterial>();
+    vis_mat->SetAmbientColor({0.f, 0.f, 0.f});
+    vis_mat->SetDiffuseColor({.5, .5, .5});
+    vis_mat->SetSpecularColor({.0f, .0f, .0f});
+    vis_mat->SetLidarIntensity(1.f);
+    vis_mat->SetUseSpecularWorkflow(true);
+    vis_mat->SetClassID(30000);
+    vis_mat->SetInstanceID(30000);
+
     // --------------------------------------------
     // add a few box bodies to be sensed by a lidar
     // --------------------------------------------
     auto box_body = chrono_types::make_shared<ChBodyEasyBox>(100, 100, 1, 1000, true, false);
     box_body->SetPos({0, 0, -1});
     box_body->SetFixed(true);
+    box_body->GetVisualModel()->GetShapeInstances()[0].first->AddMaterial(vis_mat);
     sys.Add(box_body);
 
     auto box_body_1 = chrono_types::make_shared<ChBodyEasyBox>(100, 1, 100, 1000, true, false);
     box_body_1->SetPos({0, -10, -3});
     box_body_1->SetFixed(true);
+    box_body_1->GetVisualModel()->GetShapeInstances()[0].first->AddMaterial(vis_mat);
     sys.Add(box_body_1);
 
     auto box_body_2 = chrono_types::make_shared<ChBodyEasyBox>(100, 1, 100, 1000, true, false);
     box_body_2->SetPos({0, 10, -3});
     box_body_2->SetFixed(true);
+    box_body_2->GetVisualModel()->GetShapeInstances()[0].first->AddMaterial(vis_mat);
     sys.Add(box_body_2);
 
     // -----------------------

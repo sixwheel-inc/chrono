@@ -698,8 +698,8 @@ unsigned int ChOptixPipeline::GetMaterial(std::shared_ptr<ChVisualMaterial> mat)
         material.metallic = mat->GetMetallic();
         material.anisotropy = mat->GetAnisotropy();
         material.use_specular_workflow = mat->GetUseSpecularWorkflow();
-        material.lidar_intensity = 1.f;    // TODO: allow setting of this in the visual material chrono-side
-        material.radar_backscatter = 1.f;  // TODO: allow setting of this in the visual material chrono-side
+        material.lidar_intensity = mat->GetLidarIntensity();
+        material.radar_backscatter = mat->GetRadarBackscatter(); 
         material.kn_tex = 0;               // explicitely null as default
         material.kd_tex = 0;               // explicitely null as default
         material.ks_tex = 0;               // explicitely null as default

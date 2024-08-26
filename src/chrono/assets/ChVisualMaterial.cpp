@@ -36,7 +36,9 @@ ChVisualMaterial::ChVisualMaterial()
       class_id(0),
       instance_id(0),
       use_hapke(false),
-      emissive_power(0.f) {}
+      emissive_power(0.f),
+      lidar_intensity(1.f),
+      radar_backscatter(1.f) {}
 
 void ChVisualMaterial::SetKdTexture(const std::string& filename) {
     kd_texture.SetFilename(filename);
@@ -156,6 +158,14 @@ void ChVisualMaterial::SetMetallic(float m) {
 
 void ChVisualMaterial::SetAnisotropy(float a){
     anisotropy = std::max(0.f, std::min(a, 1.f));
+}
+
+void ChVisualMaterial::SetLidarIntensity(float intensity) {
+    lidar_intensity = std::max(0.f, std::min(intensity, 1.f));
+}
+
+void ChVisualMaterial::SetRadarBackscatter(float backscatter) {
+    radar_backscatter = std::max(0.f, std::min(backscatter, 1.f));
 }
 
 void ChVisualMaterial::SetHapkeParameters(float w, float b, float c, float B_s0, float h_s, float phi, float theta_p) {
