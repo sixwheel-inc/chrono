@@ -141,6 +141,21 @@ class CH_VEHICLE_API ChTMeasyTire : public ChForceElementTire {
     /// Set vertical tire stiffness as nonlinear function by calculation from tire test data (least squares).
     void SetVerticalStiffness(std::vector<double>& defl, std::vector<double>& frc);
 
+    /// Set longitudinal stiffness coefficient
+    void SetLongitudinalStiffness(double cx) { m_par.cx = cx; }
+
+    /// Set longitudinal damping coefficient
+    void SetLongitudinalDamping(double dx) { m_par.dx = dx; }
+
+    /// Set lateral stiffness coefficient
+    void SetLateralStiffness(double cy) { m_par.cy = cy; }
+
+    /// Set lateral damping coefficient
+    void SetLateralDamping(double dy) { m_par.dy = dy; }
+
+    /// (De)Activate tire relaxation
+    void SetTireRelaxation(bool yesno) { m_use_relaxation = yesno; }
+
     /// Set the tire reference coefficient of friction.
     void SetFrictionCoefficient(double coef) { m_par.mu_0 = coef; }
 
@@ -186,9 +201,10 @@ class CH_VEHICLE_API ChTMeasyTire : public ChForceElementTire {
     double m_d1;  ///< polynomial coefficient for stiffness interpolation, linear
     double m_d2;  ///< polynomial coefficient for stiffness interpolation, quadratic
 
-    double m_vcoulomb;
     double m_frblend_begin;
     double m_frblend_end;
+
+    bool m_use_relaxation{true};
 
     VehicleSide m_measured_side;
 
@@ -217,6 +233,10 @@ class CH_VEHICLE_API ChTMeasyTire : public ChForceElementTire {
 
         double sigma0{100000.0};  ///< bristle stiffness for Dahl friction model
         double sigma1{5000.0};    ///< bristle damping for Dahl friction model
+
+        // Parameters for relaxation effects
+        double cx{0}, cy{0};  ///< horizontal stiffnesses
+        double dx{0}, dy{0};  ///< horizontal damping coefs
     };
 
     TMeasyCoeff m_par;
@@ -270,6 +290,8 @@ class CH_VEHICLE_API ChTMeasyTire : public ChForceElementTire {
         double sqe;              // Zero after complete sliding at actual load level
         double brx{0};           // bristle deformation x
         double bry{0};           // bristle deformation y
+        double xe{0};            // dynamic tire deformation x
+        double ye{0};            // dynamic tire deformation y
         ChVector3d disc_normal;  // (temporary for debug)
     };
 

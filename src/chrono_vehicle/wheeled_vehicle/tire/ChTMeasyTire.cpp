@@ -24,7 +24,7 @@
 //      Georg Rill, "Simulation von Kraftfahrzeugen",
 //          https://www.researchgate.net/publication/317037037_Simulation_von_Kraftfahrzeugen
 //
-// Known differences to the comercial version:
+// Known differences to the commercial version:
 //  - No parking slip calculations
 //  - No dynamic parking torque
 //  - No dynamic tire inflation pressure
@@ -62,7 +62,6 @@ ChTMeasyTire::ChTMeasyTire(const std::string& name)
       m_begin_start_transition(0.1),
       m_end_start_transition(0.25),
       m_use_startup_transition(false),
-      m_vcoulomb(1.0),
       m_frblend_begin(1.0),
       m_frblend_end(3.0),
       m_bottom_radius(0.0),
@@ -100,6 +99,20 @@ void ChTMeasyTire::Initialize(std::shared_ptr<ChWheel> wheel) {
     m_states.sy = 0;
     m_states.vta = m_vnum;
     m_states.R_eff = m_unloaded_radius;
+
+    // set some meaningfull relaxation parameters
+    if (m_use_relaxation) {
+        double skx = 0.9;
+        double sky = 0.8;
+        if (m_par.cx <= 0.0)
+            m_par.cx = skx * m_d1;
+        if (m_par.cy <= 0.0)
+            m_par.cy = skx * m_d1;
+        if (m_par.dx <= 0.0)
+            m_par.dx = sky * m_par.dz;
+        if (m_par.dy <= 0.0)
+            m_par.dy = sky * m_par.dz;
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -188,6 +201,8 @@ void ChTMeasyTire::Synchronize(double time, const ChTerrain& terrain) {
         m_states.sqe = 0;
         m_states.brx = 0;
         m_states.bry = 0;
+        m_states.xe = 0;
+        m_states.ye = 0;
         m_states.disc_normal = ChVector3d(0, 0, 0);
     }
 }
@@ -206,7 +221,8 @@ void ChTMeasyTire::Advance(double step) {
     // m_data.normal_force is nevertheless still taken as the applied vertical tire force
     double Fz = std::min(m_data.normal_force, m_par.pn_max);
 
-    double Fx = 0, Fy = 0;
+    double Fx_s = 0, Fy_s = 0;  // steady state horizontal forces
+    double Fx_d = 0, Fy_d = 0;  // steady state horizontal forces
     double Fx0, Fy0;
 
     CombinedCoulombForces(Fx0, Fy0, Fz, m_states.muscale);
@@ -235,27 +251,23 @@ void ChTMeasyTire::Advance(double step) {
     double fs = m_states.muscale * hypot(m_states.fxs * calpha, m_states.fys * salpha);
     double ss = m_states.muscale * hypot(m_states.sxs * calpha, m_states.sys * salpha);
     double f = 0.0;
-    double fos = 0.0;
+    double fG = 0.0;
 
-    tmxy_combined(f, fos, sc, df0, sm, fm, ss, fs);
+    tmxy_combined(f, fG, sc, df0, sm, fm, ss, fs);
     if (sc > 0.0) {
-        Fx = f * calpha;
-        Fy = f * salpha;
+        Fx_s = f * calpha;
+        Fy_s = f * salpha;
     } else {
-        Fx = 0.0;
-        Fy = 0.0;
+        Fx_s = 0.0;
+        Fy_s = 0.0;
     }
 
-    Fx = (1.0 - frblend) * Fx0 + frblend * Fx;
-    Fy = (1.0 - frblend) * Fy0 + frblend * Fy;
+    Fx_s = (1.0 - frblend) * Fx0 + frblend * Fx_s;
+    Fy_s = (1.0 - frblend) * Fy0 + frblend * Fy_s;
 
     double Mx = 0;
     double My = 0;
     double Mz = 0;
-
-    if (m_data.vel.x() >= m_frblend_begin) {
-        Mz = AlignmentTorque(Fy);
-    }
 
     // Rolling Resistance, Ramp Like Signum inhibits 'switching' of My
     My = -m_rolling_resistance * m_data.normal_force * m_unloaded_radius * tanh(m_states.omega);
@@ -269,10 +281,41 @@ void ChTMeasyTire::Advance(double step) {
         startup = ChFunctionSineStep::Eval(m_time, m_begin_start_transition, 0.0, m_end_start_transition, 1.0);
     }
 
-    // Compile the force and moment vectors so that they can be
-    // transformed into the global coordinate system.
-    m_tireforce.force = ChVector3d(startup * Fx, startup * Fy, m_data.normal_force);
-    m_tireforce.moment = startup * ChVector3d(Mx, My, Mz);
+    if (m_use_relaxation) {
+        double h = m_stepsize;
+        /*      For the curious: tau_xy relaxation time delays
+                double tau_x = m_par.dx / m_par.cx + fG / (m_states.vta * m_par.cx);
+                double tau_y = m_par.dy / m_par.cy + fG / (m_states.vta * m_par.cy);
+                rel_xy relaxation lengths
+                double rel_x = m_states.R_eff * std::abs(m_states.omega) * tau_x;
+                double rel_y = m_states.R_eff * std::abs(m_states.omega) * tau_y;
+        */
+        double xe_dot = (-m_states.vta * m_par.cx * m_states.xe - fG * (m_states.vsx)) / (m_states.vta * m_par.dx + fG);
+        double ye_dot = (-m_states.vta * m_par.cy * m_states.ye - fG * m_data.vel.y()) / (m_states.vta * m_par.dy + fG);
+        Fx_d = m_par.cx * m_states.xe + m_par.dx * xe_dot;
+        Fy_d = m_par.cy * m_states.ye + m_par.dy * ye_dot;
+        // calculate the new states xe and ye with BDF1 method
+        m_states.xe = m_states.xe - (h * (fG * m_states.vsx + m_par.cx * m_states.vta * m_states.xe)) /
+                                        (fG + m_par.dx * m_states.vta);
+        m_states.ye = (fG * m_states.ye - fG * h * m_data.vel.y() + m_par.dy * m_states.vta * m_states.ye) /
+                      (fG + m_par.dy * m_states.vta + m_par.cy * h * m_states.vta);
+        if (m_data.vel.x() >= m_frblend_begin) {
+            Mz = AlignmentTorque(Fy_d);
+        }
+        // Compile the force and moment vectors so that they can be
+        // transformed into the global coordinate system.
+        m_tireforce.force = ChVector3d(startup * Fx_d, startup * Fy_d, m_data.normal_force);
+        m_tireforce.moment = startup * ChVector3d(Mx, My, Mz);
+    } else {
+        if (m_data.vel.x() >= m_frblend_begin) {
+            Mz = AlignmentTorque(Fy_s);
+        }
+
+        // Compile the force and moment vectors so that they can be
+        // transformed into the global coordinate system.
+        m_tireforce.force = ChVector3d(startup * Fx_s, startup * Fy_s, m_data.normal_force);
+        m_tireforce.moment = startup * ChVector3d(Mx, My, Mz);
+    }
 }
 
 void ChTMeasyTire::CombinedCoulombForces(double& fx, double& fy, double fz, double muscale) {
