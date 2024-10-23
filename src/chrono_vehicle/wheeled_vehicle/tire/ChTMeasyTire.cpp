@@ -100,8 +100,9 @@ void ChTMeasyTire::Initialize(std::shared_ptr<ChWheel> wheel) {
     m_states.vta = m_vnum;
     m_states.R_eff = m_unloaded_radius;
 
-    // set some meaningfull relaxation parameters
     if (m_use_relaxation) {
+        std::cout << "Tire relaxation active!" << std::endl;
+        // set some meaningfull relaxation parameters if missing
         double skx = 0.9;
         double sky = 0.8;
         if (m_par.cx <= 0.0)

@@ -88,7 +88,7 @@ void TMeasyTire::Create(const rapidjson::Document& d) {
             throw std::runtime_error("FATAL: No Vertical Tire Stiffness Definition!");
         }
 
-        m_par.dz = d["Parameters"]["Vertical"]["Tire Vertical Damping [Ns/m]"].GetDouble();
+        m_par.dz = d["Parameters"]["Vertical"]["Vertical Tire Damping [Ns/m]"].GetDouble();
 
         // Bottoming parameters are optional, if not set, Initialize() sets default values
         if (d["Parameters"]["Vertical"].HasMember("Tire Bottoming Radius [m]"))
@@ -96,6 +96,13 @@ void TMeasyTire::Create(const rapidjson::Document& d) {
         if (d["Parameters"]["Vertical"].HasMember("Tire Bottoming Stiffness [N/m]"))
             m_bottom_stiffness = d["Parameters"]["Vertical"]["Tire Bottoming Stiffness [N/m]"].GetDouble();
 
+        // Longitudinal stiffness/damping are optional, can be guessesd
+        if (d["Parameters"]["Longitudinal"].HasMember("Longitudinal Tire Stiffness [N/m]")) {
+            m_par.cx = d["Parameters"]["Longitudinal"]["Longitudinal Tire Stiffness [N/m]"].GetDouble();
+        }
+        if (d["Parameters"]["Longitudinal"].HasMember("Longitudinal Tire Damping [Ns/m]")) {
+            m_par.dx = d["Parameters"]["Longitudinal"]["Longitudinal Tire Damping [Ns/m]"].GetDouble();
+        }
         m_par.dfx0_pn = d["Parameters"]["Longitudinal"]["Initial Slopes dFx/dsx [N]"][0u].GetDouble();
         m_par.dfx0_p2n = d["Parameters"]["Longitudinal"]["Initial Slopes dFx/dsx [N]"][1u].GetDouble();
         m_par.fxm_pn = d["Parameters"]["Longitudinal"]["Maximum Fx Load [N]"][0u].GetDouble();
@@ -107,6 +114,13 @@ void TMeasyTire::Create(const rapidjson::Document& d) {
         m_par.sxs_pn = d["Parameters"]["Longitudinal"]["Slip sx where sliding begins"][0u].GetDouble();
         m_par.sxs_p2n = d["Parameters"]["Longitudinal"]["Slip sx where sliding begins"][1u].GetDouble();
 
+        // Lateral stiffness/damping are optional, can be guessesd
+        if (d["Parameters"]["Lateral"].HasMember("Lateral Tire Stiffness [N/m]")) {
+            m_par.cy = d["Lateral"]["Longitudinal"]["Lateral Tire Stiffness [N/m]"].GetDouble();
+        }
+        if (d["Parameters"]["Lateral"].HasMember("Lateral Tire Damping [Ns/m]")) {
+            m_par.dy = d["Parameters"]["Lateral"]["Lateral Tire Damping [Ns/m]"].GetDouble();
+        }
         m_par.dfy0_pn = d["Parameters"]["Lateral"]["Initial Slopes dFy/dsy [N]"][0u].GetDouble();
         m_par.dfy0_p2n = d["Parameters"]["Lateral"]["Initial Slopes dFy/dsy [N]"][1u].GetDouble();
         m_par.fym_pn = d["Parameters"]["Lateral"]["Maximum Fy Load [N]"][0u].GetDouble();
@@ -190,6 +204,9 @@ void TMeasyTire::Create(const rapidjson::Document& d) {
 
     if (d.HasMember("Rolling Resistance Coefficient"))
         m_rolling_resistance = d["Rolling Resistance Coefficient"].GetDouble();
+
+    if (d.HasMember("Use Tire Relaxation"))
+        m_use_relaxation = d["Use Tire Relaxation"].GetBool();
 
     m_visualization_width = ChTMeasyTire::GetVisualizationWidth();
 

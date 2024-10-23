@@ -199,9 +199,9 @@ class VW_Microbus_Model : public Vehicle_Model {
     virtual std::string TireJSON(unsigned int axle) const override {
         ////return "VW_microbus/json/van_TMsimpleTireFull.json";
         ////return "VW_microbus/json/van_TMsimpleTire.json";
-        ////return "VW_microbus/json/van_TMeasyTireFull.json";
+        return "VW_microbus/json/van_TMeasyTireFull.json";
         ////return "VW_microbus/json/van_TMeasyTire.json";
-        return "VW_microbus/json/van_Pac02Tire_extTIR.json";
+        ////return "VW_microbus/json/van_Pac02Tire_extTIR.json";
         ////return "VW_microbus/json/van_Pac02Tire.json";
     }
     virtual std::string EngineJSON() const override { return "VW_microbus/json/van_EngineSimpleMap.json"; }
