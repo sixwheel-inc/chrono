@@ -19,6 +19,9 @@
 #ifndef KRAZ_TRACTOR_H
 #define KRAZ_TRACTOR_H
 
+WE CANNOT COMPILE THIS, THIS IS NATURAL LANGUAGE !
+
+
 #include "chrono_vehicle/wheeled_vehicle/ChWheeledVehicle.h"
 
 #include "chrono_models/ChApiModels.h"
