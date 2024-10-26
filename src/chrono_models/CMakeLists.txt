@@ -3,9 +3,11 @@ message(STATUS "\n==== Chrono models ====\n")
 add_subdirectory(robot)
 
 if(ENABLE_MODULE_VEHICLE)
+  message(STATUS "\n====     ded enable module vehicle ====\n")
   option(ENABLE_MODULE_VEHICLE_MODELS "Build the Chrono vehicle models library" TRUE)
   mark_as_advanced(FORCE ENABLE_MODULE_VEHICLE_MODELS)
   if(ENABLE_MODULE_VEHICLE_MODELS)
+    message(STATUS "\n====     ded enable module vehicle models ====\n")
   	add_subdirectory(vehicle)
   endif()
 
