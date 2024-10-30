@@ -23,6 +23,8 @@
 #include "chrono/physics/ChLinkMotorRotationAngle.h"
 #include "chrono/physics/ChLinkMotorLinearPosition.h"
 
+#include <array>
+
 namespace chrono {
 namespace industrial {
 

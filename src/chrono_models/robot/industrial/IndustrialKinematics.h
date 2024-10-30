@@ -24,6 +24,8 @@
 #include "chrono/core/ChRotation.h"
 #include "chrono/utils/ChUtils.h"
 
+#include <array>
+
 namespace chrono {
 namespace industrial {
 
