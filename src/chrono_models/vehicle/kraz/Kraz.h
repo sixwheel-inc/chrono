@@ -25,6 +25,7 @@
 #include "chrono_models/vehicle/kraz/Kraz_tractor_EngineSimpleMap.h"
 #include "chrono_models/vehicle/kraz/Kraz_tractor_AutomaticTransmissionSimpleMap.h"
 #include "chrono_models/vehicle/kraz/Kraz_tractor_Tire.h"
+#include "chrono_models/vehicle/kraz/Revoy.h"
 #include "chrono_models/vehicle/kraz/Kraz_trailer.h"
 #include "chrono_models/vehicle/kraz/Kraz_trailer_Tire.h"
 
@@ -90,6 +91,7 @@ class CH_MODELS_API Kraz {
 
     ChSystem* m_system;
     Kraz_tractor* m_tractor;
+    Revoy* m_revoy;
     Kraz_trailer* m_trailer;
 };
 
