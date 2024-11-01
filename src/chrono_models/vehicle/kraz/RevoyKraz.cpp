@@ -91,13 +91,22 @@ void RevoyKraz::Initialize() {
     }
 
 
-    // // Create and initialize the revoy
-    // m_revoy = m_system ? new Revoy(m_system, m_fixed, m_chassisCollisionType)
-    //                      : new Revoy(m_fixed, m_chassisCollisionType, m_contactMethod);
+    // Create and initialize the revoy
+    m_revoy = m_system ? new Revoy(m_system, m_fixed, m_chassisCollisionType)
+                         : new Revoy(m_fixed, m_chassisCollisionType, m_contactMethod);
+    {
+
+        /// relative to tractor
+        ChVector3d loc(-m_tractor->GetWheelbase(), 0, 0);
+        ChQuaternion rot;
+        rot.SetFromAngleZ(0);
+        ChCoordsys<> coord(loc, rot);
+        m_revoy->Initialize(m_tractor->GetChassis(), coord, 0);
+    }
                 
     // Create and initialize the trailer
     m_trailer = new Kraz_trailer(m_system, m_chassisCollisionType);
-    m_trailer->Initialize(m_tractor->GetChassis());
+    m_trailer->Initialize(m_revoy->GetChassis());
 
     // Create and initialize the powertrain system
     std::shared_ptr<ChEngine> engine;
