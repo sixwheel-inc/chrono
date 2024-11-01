@@ -1001,6 +1001,8 @@ set(CVM_KRAZ_FILES
     kraz/Revoy_AutomaticTransmissionSimpleMap.h
     kraz/Revoy_Chassis.cpp
     kraz/Revoy_Chassis.h
+    kraz/RevoyKraz.cpp
+    kraz/RevoyKraz.h
     kraz/Revoy.cpp
     kraz/Revoy.h
 )
