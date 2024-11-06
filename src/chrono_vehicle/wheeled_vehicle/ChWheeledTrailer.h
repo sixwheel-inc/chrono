@@ -106,6 +106,12 @@ class CH_VEHICLE_API ChWheeledTrailer {
     /// This function advances the states of all associated tires.
     void Advance(double step);
 
+    /// Get a pointer to the Chrono ChSystem.
+    ChSystem* GetSystem() { return m_system; }
+
+    /// Get the current simulation time of the underlying ChSystem.
+    double GetChTime() const { return m_system->GetChTime(); }
+
     /// Get the vehicle global location.
     /// This is the global location of the main chassis reference frame origin.
     const ChVector3d& GetPos() const { return m_chassis->GetPos(); }
@@ -114,6 +120,11 @@ class CH_VEHICLE_API ChWheeledTrailer {
     /// This is the main chassis orientation, returned as a quaternion representing a rotation with respect to the
     /// global reference frame.
     ChQuaternion<> GetRot() const { return m_chassis->GetRot(); }
+
+    /// Get the global velocity of the specified point.
+    /// The point is assumed to be given relative to the main chassis reference frame.
+    /// The returned velocity is expressed in the global reference frame.
+    ChVector3d GetPointVelocity(const ChVector3d& locpos) const { return m_chassis->GetPointVelocity(locpos); }
 
   protected:
     /// Construct a trailer system using the specified ChSystem.
