@@ -21,7 +21,7 @@
 namespace chrono {
 namespace vehicle {
 
-ChWheeledTrailer::ChWheeledTrailer(const std::string& name, ChSystem* system) : m_name(name) {}
+ChWheeledTrailer::ChWheeledTrailer(const std::string& name, ChSystem* system) : m_name(name), m_system(system) {}
 
 void ChWheeledTrailer::Initialize(std::shared_ptr<ChChassis> frontChassis) {
     m_chassis->Initialize(frontChassis, WheeledCollisionFamily::CHASSIS);
