@@ -81,8 +81,9 @@ void RevoyKraz::SetTireVisualizationType(VisualizationType vis_tractor, Visualiz
 
 void RevoyKraz::Initialize() {
     // Create and initialize the tractor
-    m_tractor = m_system ? new Kraz_tractor(m_system, m_fixed, m_chassisCollisionType)
-                         : new Kraz_tractor(m_fixed, m_chassisCollisionType, m_contactMethod);
+    m_tractor = m_system ? std::make_shared<Kraz_tractor>(m_system, m_fixed, m_chassisCollisionType)
+                         : std::make_shared<Kraz_tractor>(m_fixed, m_chassisCollisionType, m_contactMethod);
+
     m_tractor->SetCollisionSystemType(m_collsysType);
     m_tractor->Initialize(m_initPos, m_initFwdVel);
     {
@@ -92,8 +93,8 @@ void RevoyKraz::Initialize() {
 
 
     // Create and initialize the revoy
-    m_revoy = m_system ? new Revoy(m_system, m_fixed, m_chassisCollisionType)
-                         : new Revoy(m_fixed, m_chassisCollisionType, m_contactMethod);
+    m_revoy = m_system ? std::make_shared<Revoy>(m_system, m_fixed, m_chassisCollisionType)
+                         : std::make_shared<Revoy>(m_fixed, m_chassisCollisionType, m_contactMethod);
     {
 
         /// relative to tractor
@@ -105,7 +106,7 @@ void RevoyKraz::Initialize() {
     }
                 
     // Create and initialize the trailer
-    m_trailer = new Kraz_trailer(m_system, m_chassisCollisionType);
+    m_trailer = std::make_shared<Kraz_trailer>(m_system, m_chassisCollisionType);
     m_trailer->Initialize(m_revoy->GetChassis());
 
     // Create and initialize the powertrain system

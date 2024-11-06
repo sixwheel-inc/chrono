@@ -40,11 +40,13 @@ class CH_MODELS_API RevoyKraz {
     void SetTireStepSize(double step_size) { m_tire_step_size = step_size; }
 
     ChSystem* GetSystem() const { return m_tractor->GetSystem(); }
-    ChWheeledVehicle& GetTractor() const { return *m_tractor; }
+
+    std::shared_ptr<Kraz_tractor> GetTractor() const { return m_tractor; }
+    std::shared_ptr<Revoy> GetRevoy() const { return m_revoy; }
+    std::shared_ptr<Kraz_trailer> GetTrailer() const { return m_trailer; }
+
     std::shared_ptr<ChChassis> GetTractorChassis() const { return m_tractor->GetChassis(); }
     std::shared_ptr<ChBodyAuxRef> GetTractorChassisBody() const { return m_tractor->GetChassisBody(); }
-    ChWheeledTrailer& GetTrailer() const { return *m_trailer; }
-    ChWheeledVehicle& GetRevoy() const { return *m_revoy; }
 
     void Initialize();
 
@@ -81,9 +83,9 @@ class CH_MODELS_API RevoyKraz {
     TransmissionModelType m_transmissionType;
 
     ChSystem* m_system;
-    Kraz_tractor* m_tractor;
-    Revoy* m_revoy;
-    Kraz_trailer* m_trailer;
+    std::shared_ptr<Kraz_tractor> m_tractor;
+    std::shared_ptr<Revoy> m_revoy;
+    std::shared_ptr<Kraz_trailer> m_trailer;
 };
 
 /// @} vehicle_models_kraz
