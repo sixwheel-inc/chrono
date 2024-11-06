@@ -106,6 +106,15 @@ class CH_VEHICLE_API ChWheeledTrailer {
     /// This function advances the states of all associated tires.
     void Advance(double step);
 
+    /// Get the vehicle global location.
+    /// This is the global location of the main chassis reference frame origin.
+    const ChVector3d& GetPos() const { return m_chassis->GetPos(); }
+
+    /// Get the vehicle orientation.
+    /// This is the main chassis orientation, returned as a quaternion representing a rotation with respect to the
+    /// global reference frame.
+    ChQuaternion<> GetRot() const { return m_chassis->GetRot(); }
+
   protected:
     /// Construct a trailer system using the specified ChSystem.
     ChWheeledTrailer(const std::string& name,  ///< [in] trailer system name
