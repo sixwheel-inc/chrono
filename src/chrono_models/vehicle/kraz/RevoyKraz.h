@@ -24,7 +24,7 @@ namespace kraz {
 class CH_MODELS_API RevoyKraz {
   public:
     RevoyKraz();
-    RevoyKraz(ChSystem* system);
+    RevoyKraz(ChSystem* system, ChCoordsys<> initPos);
     ~RevoyKraz();
 
     void SetContactMethod(ChContactMethod val) { m_contactMethod = val; }
