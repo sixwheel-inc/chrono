@@ -133,7 +133,7 @@ class CH_VEHICLE_API ChWheeledTrailer {
     );
 
     std::string m_name;  ///< trailer system name
-
+    ChSystem* m_system;  ///< pointer to the Chrono system
     std::shared_ptr<ChChassisRear> m_chassis;         ///< trailer chassis
     std::shared_ptr<ChChassisConnector> m_connector;  ///< connector to pulling vehicle
     chrono::vehicle::ChAxleList m_axles;              ///< list of axle subsystems
