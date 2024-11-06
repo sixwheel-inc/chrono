@@ -45,9 +45,9 @@ RevoyKraz::RevoyKraz(ChSystem* system)
       m_initOmega({0, 0, 0, 0}) {}
 
 RevoyKraz::~RevoyKraz() {
-    delete m_tractor;
-    delete m_revoy;
-    delete m_trailer;
+    m_tractor.reset();
+    m_revoy.reset();
+    m_trailer.reset();
 }
 
 void RevoyKraz::SetChassisVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
