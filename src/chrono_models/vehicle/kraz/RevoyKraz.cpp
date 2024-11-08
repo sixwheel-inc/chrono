@@ -52,30 +52,30 @@ RevoyKraz::~RevoyKraz() {
 
 void RevoyKraz::SetChassisVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetChassisVisualizationType(vis_tractor);
-    m_revoy->SetChassisVisualizationType(vis_revoy);
+    // m_revoy->SetChassisVisualizationType(vis_revoy);
     // m_trailer->SetChassisVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetSuspensionVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetSuspensionVisualizationType(vis_tractor);
-    m_revoy->SetSuspensionVisualizationType(vis_revoy);
+    // m_revoy->SetSuspensionVisualizationType(vis_revoy);
     // m_trailer->SetSuspensionVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetSteeringVisualizationType(VisualizationType vis) {
     m_tractor->SetSteeringVisualizationType(vis);
-    m_revoy->SetSteeringVisualizationType(vis);
+    // m_revoy->SetSteeringVisualizationType(vis);
 }
 
 void RevoyKraz::SetWheelVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetWheelVisualizationType(vis_tractor);
-    m_revoy->SetWheelVisualizationType(vis_revoy);
+    // m_revoy->SetWheelVisualizationType(vis_revoy);
     // m_trailer->SetWheelVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetTireVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetTireVisualizationType(vis_tractor);
-    m_revoy->SetTireVisualizationType(vis_revoy);
+    // m_revoy->SetTireVisualizationType(vis_revoy);
     // m_trailer->SetTireVisualizationType(vis_trailer);
 }
 
@@ -93,17 +93,17 @@ void RevoyKraz::Initialize() {
 
 
     // Create and initialize the revoy
-    m_revoy = m_system ? std::make_shared<Revoy>(m_system, m_fixed, m_chassisCollisionType)
-                         : std::make_shared<Revoy>(m_fixed, m_chassisCollisionType, m_contactMethod);
-    {
+    // m_revoy = m_system ? std::make_shared<Revoy>(m_system, m_fixed, m_chassisCollisionType)
+    //                      : std::make_shared<Revoy>(m_fixed, m_chassisCollisionType, m_contactMethod);
+    // {
 
-        /// relative to tractor
-        ChVector3d loc(-m_tractor->GetWheelbase(), 0, 0);
-        ChQuaternion rot;
-        rot.SetFromAngleZ(0);
-        ChCoordsys<> coord(loc, rot);
-        m_revoy->Initialize(m_tractor->GetChassis(), coord, 0);
-    }
+    //     /// relative to tractor
+    //     ChVector3d loc(-m_tractor->GetWheelbase(), 0, 0);
+    //     ChQuaternion rot;
+    //     rot.SetFromAngleZ(0);
+    //     ChCoordsys<> coord(loc, rot);
+    //     m_revoy->Initialize(m_tractor->GetChassis(), coord, 0);
+    // }
                 
     // // Create and initialize the trailer
     // m_trailer = std::make_shared<Kraz_trailer>(m_system, m_chassisCollisionType);
@@ -207,18 +207,18 @@ void RevoyKraz::Initialize() {
     m_tractor->InitializeInertiaProperties();
 
     // Recalculate vehicle mass, to properly account for all subsystems
-    m_revoy->InitializeInertiaProperties();
+    // m_revoy->InitializeInertiaProperties();
 }
 
 void RevoyKraz::Synchronize(double time, const DriverInputs& driver_inputs, const ChTerrain& terrain) {
     m_tractor->Synchronize(time, driver_inputs, terrain);
-    m_revoy->Synchronize(time, driver_inputs, terrain);
+    // m_revoy->Synchronize(time, driver_inputs, terrain);
     // m_trailer->Synchronize(time, driver_inputs, terrain);
 }
 
 void RevoyKraz::Advance(double step) {
     m_tractor->Advance(step);
-    m_revoy->Advance(step);
+    // m_revoy->Advance(step);
     // m_trailer->Advance(step);
 }
 
