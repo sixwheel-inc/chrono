@@ -53,13 +53,13 @@ RevoyKraz::~RevoyKraz() {
 void RevoyKraz::SetChassisVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetChassisVisualizationType(vis_tractor);
     m_revoy->SetChassisVisualizationType(vis_revoy);
-    m_trailer->SetChassisVisualizationType(vis_trailer);
+    // m_trailer->SetChassisVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetSuspensionVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetSuspensionVisualizationType(vis_tractor);
     m_revoy->SetSuspensionVisualizationType(vis_revoy);
-    m_trailer->SetSuspensionVisualizationType(vis_trailer);
+    // m_trailer->SetSuspensionVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetSteeringVisualizationType(VisualizationType vis) {
@@ -70,13 +70,13 @@ void RevoyKraz::SetSteeringVisualizationType(VisualizationType vis) {
 void RevoyKraz::SetWheelVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetWheelVisualizationType(vis_tractor);
     m_revoy->SetWheelVisualizationType(vis_revoy);
-    m_trailer->SetWheelVisualizationType(vis_trailer);
+    // m_trailer->SetWheelVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::SetTireVisualizationType(VisualizationType vis_tractor, VisualizationType vis_revoy, VisualizationType vis_trailer) {
     m_tractor->SetTireVisualizationType(vis_tractor);
     m_revoy->SetTireVisualizationType(vis_revoy);
-    m_trailer->SetTireVisualizationType(vis_trailer);
+    // m_trailer->SetTireVisualizationType(vis_trailer);
 }
 
 void RevoyKraz::Initialize() {
@@ -105,9 +105,16 @@ void RevoyKraz::Initialize() {
         m_revoy->Initialize(m_tractor->GetChassis(), coord, 0);
     }
                 
-    // Create and initialize the trailer
-    m_trailer = std::make_shared<Kraz_trailer>(m_system, m_chassisCollisionType);
-    m_trailer->Initialize(m_revoy->GetChassis());
+    // // Create and initialize the trailer
+    // m_trailer = std::make_shared<Kraz_trailer>(m_system, m_chassisCollisionType);
+    // {
+    //     /// relative to revoy
+    //     ChVector3d loc(-m_revoy->GetWheelbase() * 2, 0, 0);
+    //     ChQuaternion rot;
+    //     rot.SetFromAngleZ(0);
+    //     ChCoordsys<> coord(loc, rot);
+    //     m_trailer->Initialize(m_revoy->GetChassis(), coord, 0);
+    // }
 
     // Create and initialize the powertrain system
     std::shared_ptr<ChEngine> engine;
@@ -168,19 +175,19 @@ void RevoyKraz::Initialize() {
     m_tractor->InitializeTire(tire_RR2o, m_tractor->GetAxle(2)->m_wheels[3], VisualizationType::NONE);
 
     // Create the trailer tires
-    auto tr_tire_FL = chrono_types::make_shared<Kraz_trailer_Tire>("FL");
-    auto tr_tire_FR = chrono_types::make_shared<Kraz_trailer_Tire>("FR");
-    auto tr_tire_ML = chrono_types::make_shared<Kraz_trailer_Tire>("ML");
-    auto tr_tire_MR = chrono_types::make_shared<Kraz_trailer_Tire>("MR");
-    auto tr_tire_RL = chrono_types::make_shared<Kraz_trailer_Tire>("RL");
-    auto tr_tire_RR = chrono_types::make_shared<Kraz_trailer_Tire>("RR");
+    // auto tr_tire_FL = chrono_types::make_shared<Kraz_trailer_Tire>("FL");
+    // auto tr_tire_FR = chrono_types::make_shared<Kraz_trailer_Tire>("FR");
+    // auto tr_tire_ML = chrono_types::make_shared<Kraz_trailer_Tire>("ML");
+    // auto tr_tire_MR = chrono_types::make_shared<Kraz_trailer_Tire>("MR");
+    // auto tr_tire_RL = chrono_types::make_shared<Kraz_trailer_Tire>("RL");
+    // auto tr_tire_RR = chrono_types::make_shared<Kraz_trailer_Tire>("RR");
 
-    m_trailer->InitializeTire(tr_tire_FL, m_trailer->GetAxle(0)->m_wheels[0], VisualizationType::NONE);
-    m_trailer->InitializeTire(tr_tire_FR, m_trailer->GetAxle(0)->m_wheels[1], VisualizationType::NONE);
-    m_trailer->InitializeTire(tr_tire_ML, m_trailer->GetAxle(1)->m_wheels[0], VisualizationType::NONE);
-    m_trailer->InitializeTire(tr_tire_MR, m_trailer->GetAxle(1)->m_wheels[1], VisualizationType::NONE);
-    m_trailer->InitializeTire(tr_tire_RL, m_trailer->GetAxle(2)->m_wheels[0], VisualizationType::NONE);
-    m_trailer->InitializeTire(tr_tire_RR, m_trailer->GetAxle(2)->m_wheels[1], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_FL, m_trailer->GetAxle(0)->m_wheels[0], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_FR, m_trailer->GetAxle(0)->m_wheels[1], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_ML, m_trailer->GetAxle(1)->m_wheels[0], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_MR, m_trailer->GetAxle(1)->m_wheels[1], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_RL, m_trailer->GetAxle(2)->m_wheels[0], VisualizationType::NONE);
+    // m_trailer->InitializeTire(tr_tire_RR, m_trailer->GetAxle(2)->m_wheels[1], VisualizationType::NONE);
 
     for (auto& axle : m_tractor->GetAxles()) {
         for (auto& wheel : axle->GetWheels()) {
@@ -189,12 +196,12 @@ void RevoyKraz::Initialize() {
         }
     }
 
-    for (auto& axle : m_trailer->GetAxles()) {
-        for (auto& wheel : axle->GetWheels()) {
-            if (m_tire_step_size > 0)
-                wheel->GetTire()->SetStepsize(m_tire_step_size);
-        }
-    }
+    // for (auto& axle : m_trailer->GetAxles()) {
+    //     for (auto& wheel : axle->GetWheels()) {
+    //         if (m_tire_step_size > 0)
+    //             wheel->GetTire()->SetStepsize(m_tire_step_size);
+    //     }
+    // }
 
     // Recalculate vehicle mass, to properly account for all subsystems
     m_tractor->InitializeInertiaProperties();
@@ -206,13 +213,13 @@ void RevoyKraz::Initialize() {
 void RevoyKraz::Synchronize(double time, const DriverInputs& driver_inputs, const ChTerrain& terrain) {
     m_tractor->Synchronize(time, driver_inputs, terrain);
     m_revoy->Synchronize(time, driver_inputs, terrain);
-    m_trailer->Synchronize(time, driver_inputs, terrain);
+    // m_trailer->Synchronize(time, driver_inputs, terrain);
 }
 
 void RevoyKraz::Advance(double step) {
     m_tractor->Advance(step);
     m_revoy->Advance(step);
-    m_trailer->Advance(step);
+    // m_trailer->Advance(step);
 }
 
 }  // end namespace kraz
